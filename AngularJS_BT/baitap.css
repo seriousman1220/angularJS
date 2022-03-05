@@ -1,0 +1,23 @@
+tbody>tr:hover{
+    background-color: #CFFFB0 !important;
+    color: black !important;
+}
+
+
+.required:after{
+    content: " *";
+    color: red;
+}
+
+.modal-footer {
+    background-color: #d3eaf2;
+}
+
+.modal-footer > button {
+    border-radius: 0%;
+}
+
+tbody>tr.select_all {
+    background-color: #995D81 !important; 
+    color: white !important;
+}

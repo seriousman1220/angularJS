@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bai tap Angular </title>
+    <link rel="shortcut icon" href="">
+    <link rel="stylesheet" href="baitap.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+</head>
+
+<body ng-controller="myController">
+    <div class="row">
+        <div class="navbar navbar-fixed-top" style="background-color: #005e9c">
+            <img src="logo_menu.png" alt="logo" style="padding: 5px">
+        </div>
+    </div>
+    <div class="row">
+        <div class="navbar navbar-default" style="padding-top: 50px; ">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="navbar-brand">
+                        <p style="color: #b5b5b6;">&emsp;Kết quả đánh giá khóa đào tạo</p>
+                    </div>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <div class="navbar-right" style="padding-top: 5px; ">
+                        <ul class="nav navbar-nav nav-pills">
+                            <li>
+                                <button class="btn btn-group glyphicon glyphicon-refresh" style="color: #005E9C;"
+                                    id="refresh" ng-click="refresh()">
+                                </button>
+                            </li>
+                            <li>
+                                <button class="btn btn-group glyphicon glyphicon-plus" style="color: #005E9C;" id="add"
+                                    class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modelId">
+                                </button>
+                            </li>
+                            <li>
+                                <button class="btn btn-group glyphicon glyphicon-edit" style="color: #005E9C;"
+                                    ng-click="sua()">
+                                </button>
+                            </li>
+                            <li>
+                                <button class="btn btn-group glyphicon glyphicon-duplicate"
+                                    style="color: #005E9C;"></button>
+                            </li>
+                            <li>
+                                <button class="btn btn-group glyphicon glyphicon-trash" style="color: red;"
+                                    ng-click="xoa(selectedRow)">
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="input-group" style="margin-top: -20px;">
+                <input type="text" class="form-control" placeholder="Nhập thông tin tìm kiếm">
+                <div class="input-group-btn" style="border-radius: 0%;">
+                    <button class="btn btn-group glyphicon glyphicon-triangle-bottom" data-toggle="collapse"
+                        data-target="#collapse1"></button>
+                    <button class="btn btn-group btn-primary" style="border-radius: 0px;">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="collapse1" style="border-radius: 0px; padding: 5px;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Khóa đào tạo</label>
+                    <select class="form-control">
+                        <option selected>Chọn khóa đào tạo...</option>
+                        <option>API</option>
+                        <option>A</option>
+                        <option>B</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Ngày đánh giá</label>
+                    <input type="date" class="form-control" ng-model="ngay_dg">
+                </div>
+                <div class="col-md-3">
+                    <label>Bộ phận</label>
+                    <select class="form-control">
+                        <option selected>Chọn bộ phận...</option>
+                        <option>API</option>
+                        <option>A</option>
+                        <option>B</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Tổng điểm từ</label>
+                            <input type="number" class="form-control" ng-model="result_from">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tổng điểm đến</label>
+                            <input type="number" class="form-control" ng-model="result_to">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p>Tổng số bản ghi: <span ng-bind="dssv.length"></span></p>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-bordered table-striped" id="studentTable">
+                <thead>
+                    <tr>
+                        <th scope="row" class="text-center">STT</th>
+                        <th class="text-center"><input class="form-check-input" type="checkbox" ng-model="all" ng-change="select_all()" ></th>
+                        <th class="text-center">Sửa</th>
+                        <th class="text-center">Xóa</th>
+                        <th class="text-center">Mã khóa đào tạo</th>
+                        <th class="text-center">Tên khóa đào tạo</th>
+                        <th class="text-center">Tên nhân viên</th>
+                        <th class="text-center">Bộ phận</th>
+                        <th class="text-center">Ngày đánh giá</th>
+                        <th class="text-center">Tên người hướng dẫn</th>
+                        <th class="text-center">Tổng điểm</th>
+                        <th class="text-center">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center" ng-repeat="item in dssv"  ng-class="{'select_all': highlightAll(all)}"
+                        ng-style="(item.selected==true ? ({'background': '#995D81', color: 'white'}) : ((item.tong_diem >= 7) ? {'background': '#5998C5'} : (item.tong_diem >= 5) ? {'background': '#FFF689'} : {'background': '#FFB0A3'}))">
+                        <td>{{$index + 1}}</td>
+                        <td><input type="checkbox" ng-click="getRow(item.id) || (item.selected = !item.selected)"
+                                ng-checked="all"></td>
+                        <td><button class="btn glyphicon glyphicon-pencil" ng-click="sua(item.id)"
+                                style="color: #005E9C; background-color: transparent"></button></td>
+                        <td><button class="btn glyphicon glyphicon-trash" ng-click="xoa(item.id)"
+                                style="color: red; background: transparent;"></button></td>
+                        <td ng-bind="item.ma_khoa"></td>
+                        <td ng-bind="item.ten_khoa"></td>
+                        <td ng-bind="item.ten_sv"></td>
+                        <td ng-bind="item.bp"></td>
+                        <td ng-bind="item.ngay_dg | date: 'dd/MM/yyyy'"></td>
+                        <td ng-bind="item.ten_hd"></td>
+                        <td ng-bind="item.tong_diem"></td>
+                        <td ng-bind="item.trang_thai"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close float-right" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 class="modal-title text-primary text-center" ng-bind="modalTitleId"></h3>
+
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="required">Khóa đào tạo</label>
+                                <select class="form-control" id="id_khoahoc" style="border-radius: 0px;"
+                                    ng-model="khoa_dt" ng-options="x.ma_khoa as x.ten_khoa for x in khoa_hoc" ng-change="ngayhoc()">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required">Mã nhân viên</label>
+                                <input type="text" class="form-control" ng-model="ma_sv" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required">Ngày đánh giá</label>
+                                <input type="date" class="form-control" ng-model="ngay_dg">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Từ ngày</label>
+                                <input type="date" class="form-control" ng-model="ngay_bd">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required">Tên nhân viên</label>
+                                <input type="text" class="form-control" ng-model="ten_sv"
+                                    style="text-transform: capitalize;">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Trạng thái</label>
+                                <select class="form-control" ng-model="trangthai"
+                                    ng-options="x.tt_yn as x.tt_title for x in tt">
+
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Đến ngày</label>
+                                <input type="date" class="form-control" ng-model="ngay_kt">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Bộ phận</label>
+                                <select class="form-control" ng-model="bo_phan"
+                                    ng-options="x.ma_bp as x.ten_bp for x in bp" ng-change="diemcong()">
+
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Tổng điểm</label>
+                                <input type="number" class="form-control" ng-model="tong_diem" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Người hướng dẫn</label>
+                                <input type="text" class="form-control" ng-model="nguoi_hd">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Điểm cộng</label>
+                                <input type="number" class="form-control" ng-model="bonus" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"><button class="btn glyphicon glyphicon-plus" data-toggle="modal" data-target="#modelId2"
+                                                style="background-color: transparent; color:#005E9C;"></button></th>
+                                        <th class="text-center">Sửa</th>
+                                        <th class="text-center">Xóa</th>
+                                        <th class="text-center">Mã chỉ tiêu</th>
+                                        <th class="text-center">Tên chỉ tiêu</th>
+                                        <th class="text-center">Hệ số</th>
+                                        <th class="text-center">Điểm</th>
+                                        <th class="text-center">Điểm quy đổi</th>
+                                        <th class="text-center">Nhận xét</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="luu();">Lưu</button>
+                        <button type="button" class="btn btn-primary">Lưu và Copy</button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="modelId2" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                   
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title text-center">Cập nhật chỉ tiêu đánh giá</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="required">Mã chỉ tiêu</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="required">Tên chỉ tiêu</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="required">Hệ số</label>
+                                <input type="number" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required">Điểm</label>
+                                <input type="number" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Điểm quy đổi</label>
+                                <input type="number" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Nhận xét</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Lưu</button>
+                    <button type="button" class="btn btn-primary">Lưu và Thêm</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+</body>
+<script src="baitap.js"></script>
+
+</html>
